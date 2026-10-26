@@ -1,0 +1,334 @@
+<title>Nimbus Labs Scenario Map</title>
+{{HEAD}}
+<style>
+{{SHARED_CSS}}
+
+/* Scenario map additions: same tokens as the design brief, numbered rail for the 4 sections */
+:root{
+  --pr1:var(--p1); --pr2:var(--p2); --pr3:var(--p3);
+  --ty1:#3b4a7a; --ty2:#b5651d; --ty3:#8a3f6b;
+  --cs1:var(--p1); --cs2:var(--p5); --cs3:var(--p2); --cs4:var(--p4); --on-fill:#ffffff;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ty1:#9fb0e6; --ty2:#f0a35e; --ty3:#e48fc0; --on-fill:#0e1220}}
+:root[data-theme="dark"]{--ty1:#9fb0e6; --ty2:#f0a35e; --ty3:#e48fc0; --on-fill:#0e1220}
+
+.company{margin:6px 0 0;font-family:var(--f-mono);font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.company b{color:var(--ink);font-weight:500}
+.hero .assignment{max-width:22ch}
+.lede{color:var(--muted);margin:-8px 0 22px}
+.muted{color:var(--muted);font-weight:500}
+
+/* 1. Users */
+.ucard{display:flex;flex-direction:column;gap:8px}
+.ucard header{display:flex;align-items:center;gap:12px}
+.ucard h4{margin:0;font-size:1.02rem}
+.urole{display:block;font-size:.85rem;color:var(--muted)}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;flex:none;font-size:.9rem}
+.av-primary{background:var(--t-primary-bg);color:var(--t-primary)}
+.av-secondary{background:var(--t-secondary-bg);color:var(--t-secondary)}
+.av-tertiary{background:var(--t-tertiary-bg);color:var(--t-tertiary)}
+.ucard .tlabel{margin:4px 0 0}
+.ucard ul.list{margin-bottom:6px;font-size:.95rem}
+.ujump{all:unset;cursor:pointer;margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);font-size:.85rem;font-weight:700;color:var(--accent)}
+.ujump:hover{text-decoration:underline}
+.ujump:focus-visible{outline:2px solid var(--gold)}
+
+/* tables shared */
+.sid{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);white-space:nowrap;font-variant-numeric:tabular-nums}
+.uchips{display:flex;flex-wrap:wrap;gap:4px}
+.allu{font-weight:700;font-size:.8rem;margin-right:4px;align-self:center}
+.oref{display:inline-block;margin-left:6px;font-family:var(--f-mono);font-size:.72rem;color:var(--muted);background:var(--soft);padding:0 6px;border-radius:4px;white-space:nowrap}
+.xn{min-width:170px}
+.xjump{display:inline-grid;place-items:center;min-width:34px;height:28px;padding:0 8px;border-radius:8px;border:1px solid var(--line);font-family:var(--f-mono);font-size:.8rem;text-decoration:none;font-variant-numeric:tabular-nums}
+.xjump:hover{border-color:var(--accent);background:var(--soft)}
+.exptable td:nth-child(4),.exptable td:nth-child(5){min-width:200px}
+
+/* 3. Summary */
+.stats{display:grid;grid-template-columns:minmax(0,.7fr) repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+@media (max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.stats{grid-template-columns:1fr}}
+.stat{display:flex;flex-direction:column;gap:8px;padding:16px 18px}
+.stat .num{font-family:var(--f-display);font-size:3rem;line-height:1;color:var(--accent)}
+.stat .sub{font-size:.85rem;color:var(--muted)}
+.sbar{display:flex;height:26px;border-radius:7px;overflow:hidden;gap:2px}
+.seg2{display:flex;align-items:center;justify-content:center;min-width:22px;color:var(--on-fill);font-family:var(--f-mono);font-size:.72rem}
+.seg2 b{font-weight:500}
+.sleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.8rem;color:var(--muted)}
+.sleg span{display:inline-flex;align-items:center;gap:5px}
+.sleg b{color:var(--ink);font-variant-numeric:tabular-nums}
+.d{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
+.p1{background:var(--pr1)}.p2{background:var(--pr2)}.p3{background:var(--pr3)}
+.t1{background:var(--ty1)}.t2{background:var(--ty2)}.t3{background:var(--ty3)}
+.k1{background:var(--p2)}.k2{background:var(--ty1)}.k3{background:var(--p3)}.k4{background:var(--p5)}
+
+.pdefs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;margin-bottom:26px}
+.pdef{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.pdef>*{min-width:0}
+.pdef h4{margin:0 0 2px}
+.pdef p{margin:0;font-size:.92rem;color:var(--muted)}
+.pri{display:inline-block;font-family:var(--f-mono);font-size:.74rem;font-weight:500;padding:2px 8px;border-radius:6px;color:var(--on-fill);line-height:1.5}
+.pri.p1{background:var(--pr1)}.pri.p2{background:var(--pr2)}.pri.p3{background:var(--pr3)}
+.pdef .pri{font-size:.95rem;padding:6px 10px}
+
+/* filters */
+.toolbar{position:relative}
+.grow1{flex:1 1 220px}
+#q{font:inherit;font-size:.88rem;flex:1;min-width:0;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink)}
+#q:focus{outline:2px solid var(--gold);outline-offset:1px}
+
+/* experience groups */
+.groups{display:grid;gap:10px}
+.xgroup{background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0}
+.xgroup summary{list-style:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:14px 18px;cursor:pointer}
+.xgroup summary::-webkit-details-marker{display:none}
+.xgroup summary:hover{background:var(--soft);border-radius:12px}
+.xgroup[open] summary{border-bottom:1px solid var(--line);border-radius:12px 12px 0 0}
+.eid{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);min-width:30px}
+.xname{font-weight:700;flex:1 1 220px}
+.xcount{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.mini{display:flex;align-items:center;gap:10px}
+.mbar{display:flex;width:90px;height:8px;border-radius:4px;overflow:hidden;gap:1px;background:var(--soft)}
+.mnums{display:flex;gap:8px;font-family:var(--f-mono);font-size:.7rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.mnums span{display:inline-flex;align-items:center;gap:4px}
+.mnums .d{width:8px;height:8px}
+.chev{width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-3px);transition:transform .2s;flex:none}
+.xgroup[open] .chev{transform:rotate(-135deg)}
+@media (max-width:620px){.mini{order:5;width:100%}}
+.tablewrap.inner{border:0;border-radius:0 0 12px 12px}
+.smap{min-width:860px}
+.smap th:nth-child(3){width:44%}
+.smap td{vertical-align:middle}
+.smap tr:last-child td{border-bottom:0}
+.ucell{min-width:120px}
+.ucell .chip{white-space:normal}
+.stext{line-height:1.45}
+.ttag{font-size:.75rem;font-weight:700;white-space:nowrap}
+.t-main{color:var(--ty1)}.t-atypical{color:var(--ty2)}.t-external{color:var(--ty3)}
+.ttag::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:1px}
+.crud{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;font-family:var(--f-mono);font-size:.75rem;font-weight:500;background:var(--soft);color:var(--ink);margin-right:6px}
+.crudw{font-size:.8rem;color:var(--muted)}
+.pcell,.ccell,.catcell{white-space:nowrap}
+.cstag{margin-left:6px;font-family:var(--f-mono);font-size:.7rem;text-decoration:none;color:var(--muted);border:1px dashed var(--line);padding:1px 6px;border-radius:5px}
+.cstag:hover{color:var(--accent);border-color:var(--accent)}
+tr.flash td{background:var(--gold-soft);transition:background .3s}
+.noresult{display:none;color:var(--muted);font-size:.92rem;padding:14px 4px}
+
+/* 4. Consolidated scenarios */
+.coverage{margin-bottom:22px}
+.covhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;margin-bottom:12px}
+.covhead h3{margin:0}
+.covhead p{margin:0}
+.covbar{display:flex;gap:3px;height:44px}
+.cseg{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 10px;border-radius:7px;color:var(--on-fill);text-decoration:none;min-width:0;overflow:hidden;font-family:var(--f-mono);font-size:.78rem}
+.cseg b{font-weight:500}
+.cseg span{opacity:.85}
+.cseg:hover{filter:brightness(1.08)}
+.cs1 .csnum,.cseg.cs1{background:var(--cs1)}.cs2 .csnum,.cseg.cs2{background:var(--cs2)}.cs3 .csnum,.cseg.cs3{background:var(--cs3)}.cs4 .csnum,.cseg.cs4{background:var(--cs4)}
+.covsum{margin:10px 0 0;font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+
+.cslist{display:grid;gap:22px}
+.cscard{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;scroll-margin-top:72px}
+.cshead{display:flex;gap:18px;align-items:flex-start;padding:20px 22px 16px;border-bottom:1px solid var(--line)}
+.csnum{flex:none;width:56px;height:56px;border-radius:12px;display:grid;place-items:center;color:var(--on-fill);font-family:var(--f-display);font-size:1.35rem}
+.cstitle{min-width:0}
+.cstitle h3{font-family:var(--f-display);font-weight:400;font-size:clamp(1.25rem,2.6vw,1.6rem);line-height:1.2;margin:2px 0 8px}
+.csbody{padding:18px 22px 22px;display:grid;gap:20px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px}
+.cols>*{min-width:0}
+.bk{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:0 0 8px}
+.block p{margin:0 0 8px}
+.goal{background:var(--soft);border-radius:10px;padding:14px 16px}
+.metrics{margin:0;padding-left:1.1em}
+.metrics li{margin-bottom:4px}
+.metrics li::marker{color:var(--gold)}
+.xtags{display:flex;flex-wrap:wrap;gap:6px}
+.xtag{font-size:.8rem;font-weight:600;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:3px 11px}
+.xtag b{font-family:var(--f-mono);font-weight:500;color:var(--accent);margin-right:3px}
+.xtag:hover{border-color:var(--accent)}
+.steps{margin:0;padding:0;list-style:none;counter-reset:st;display:grid;gap:0}
+.steps li{counter-increment:st;display:grid;grid-template-columns:30px 1fr;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.steps li:first-child{border-top:0}
+.steps li::before{content:counter(st);font-family:var(--f-mono);font-size:.8rem;color:var(--accent);padding-top:2px}
+.sref{font-family:var(--f-mono);font-size:.82em;text-decoration:none;background:var(--soft);padding:0 4px;border-radius:4px;white-space:nowrap}
+.sref:hover{background:var(--accent);color:var(--accent-ink)}
+.emotion{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;position:relative}
+.emotion li{position:relative;padding:22px 14px 0 0}
+.emotion li::before{content:"";position:absolute;top:6px;left:0;right:0;height:2px;background:var(--line)}
+.emotion li::after{content:"";position:absolute;top:1px;left:0;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--gold)}
+.emotion li:last-child::after{background:var(--gold)}
+.estage{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.emotion p{margin:2px 0 0;font-size:.95rem}
+@media (max-width:620px){.emotion{grid-template-columns:1fr}.emotion li{padding:0 0 12px 24px}.emotion li::before{top:0;bottom:0;left:5px;right:auto;width:2px;height:auto}.emotion li::after{top:4px}}
+.ids{display:flex;flex-wrap:wrap;gap:6px}
+.chipid{padding:3px 8px;border:1px solid var(--line);background:var(--bg)}
+@media (max-width:560px){.cshead{gap:12px;padding:16px}.csnum{width:44px;height:44px;font-size:1.1rem}.csbody{padding:16px}}
+
+@media print{
+  .rail,.toolbar,.ujump{display:none!important}
+  body{background:#fff;color:#000;font-size:11pt}
+  section{padding-block:24px 0}
+  .tablewrap{overflow:visible}table{min-width:0}
+  .cscard,.panel{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+
+{{SITEBAR}}
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="crest"><img src="data:image/png;base64,{{LOGO}}" alt="O.P. Jindal Global University, Institution of Eminence Deemed to be University: A Private University Promoting Public Service" width="480" height="395"></div>
+    <p class="programme">MDes in User Experience and AI-2026</p>
+    <div class="hero-rule" aria-hidden="true"></div>
+    <h1 class="assignment">Scenario Map for Team Resource Allocation Platform</h1>
+    <p class="company">Company Name: <b>Nimbus Labs</b></p>
+    <p class="author">Muzakir Ahmed</p>
+    <div class="doc-type"><span>Interaction Design Intensive- Assignment A</span><span>Part 2 · Scenario Mapping</span></div>
+  </div>
+</header>
+
+<div class="rail">
+  <div class="wrap">
+    <nav aria-label="Scenario map sections">
+      <a href="#users"><b>1</b>Users &amp; tasks</a>
+      <a href="#experiences"><b>2</b>Experiences</a>
+      <a href="#map"><b>3</b>Scenario map</a>
+      <a href="#consolidated"><b>4</b>Consolidated scenarios</a>
+    </nav>
+  </div>
+  <div class="progress" id="progress"></div>
+</div>
+
+<main>
+<section id="users"><div class="wrap">
+  <div class="sec-head"><span class="sec-letter">1</span><span class="eyebrow">7 users · 3 tiers</span><h2>Identified Users and Key Tasks</h2></div>
+{{USERS}}
+</div></section>
+
+<section id="experiences"><div class="wrap">
+  <div class="sec-head"><span class="sec-letter">2</span><span class="eyebrow">{{NEXP}} experiences · non-sequential</span><h2>Major Experiences</h2></div>
+  <p class="lede prose">Users can enter any of them at any point, in no fixed order. Each experience has its own user goal and business value, linked back to an outcome in the design brief.</p>
+  <div class="tablewrap">
+    <table class="exptable">
+      <thead><tr><th>#</th><th>Experience</th><th>Users</th><th>User goal</th><th>Business value</th><th>Scenarios</th></tr></thead>
+      <tbody>
+{{EXPROWS}}
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<section id="map"><div class="wrap">
+  <div class="sec-head"><span class="sec-letter">3</span><span class="eyebrow">{{TOTAL}} unique scenarios · grouped by experience</span><h2>Prioritized Scenario Map</h2></div>
+{{STATS}}
+  <div class="pdefs">{{DEFS}}</div>
+{{FILTERS}}
+  <div class="groups" id="groups">
+{{GROUPS}}
+  </div>
+  <p class="noresult" id="noresult">No scenarios match these filters.</p>
+</div></section>
+
+<section id="consolidated"><div class="wrap">
+  <div class="sec-head"><span class="sec-letter">4</span><span class="eyebrow">Context · Goal &amp; Metrics · Action · User Emotion</span><h2>Consolidated Scenarios</h2></div>
+{{COVERAGE}}
+  <div class="cslist">
+{{CS}}
+  </div>
+</div></section>
+</main>
+
+{{PAGER}}
+
+<footer><div class="wrap">
+  <span>Muzakir Ahmed · MDes in User Experience and AI-2026 · Interaction Design Intensive- Assignment A</span>
+  <span style="display:flex;gap:10px;flex-wrap:wrap">
+    <a class="ai-link" href="https://claude.ai/artifact/NcxexpHQEXEVzk5BGcxWSw" target="_blank" rel="noopener">AI interactions transcript <span aria-hidden="true">↗</span></a>
+  </span>
+</div></footer>
+
+<script>
+(function(){
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const smooth=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+
+  // Scrollspy + reading progress
+  const links=$$('.rail a'), secs=links.map(a=>$(a.getAttribute('href')));
+  const bar=$('#progress');
+  function spy(){
+    const y=window.scrollY+110; let cur=-1;
+    secs.forEach((s,i)=>{ if(s.offsetTop<=y) cur=i; });
+    links.forEach((a,i)=>a.classList.toggle('on',i===cur));
+    if(cur>=0){ const a=links[cur], nav=a.parentElement;
+      const l=a.offsetLeft-nav.offsetLeft, r=l+a.offsetWidth;
+      if(l<nav.scrollLeft||r>nav.scrollLeft+nav.clientWidth) nav.scrollTo({left:l-20,behavior:'smooth'}); }
+    const h=document.documentElement.scrollHeight-innerHeight;
+    bar.style.width=(h>0?Math.min(100,scrollY/h*100):0)+'%';
+  }
+  addEventListener('scroll',spy,{passive:true}); addEventListener('resize',spy); spy();
+
+  // Scenario map filters
+  const groups=$$('.xgroup'), allRows=$$('.smap tbody tr');
+  const f={p:'all',t:'all',c:'all',u:'all',q:''};
+  const active=()=>f.p!=='all'||f.t!=='all'||f.c!=='all'||f.u!=='all'||f.q!=='';
+  function apply(openMatches){
+    $$('#mapbar [data-f]').forEach(b=>b.setAttribute('aria-pressed',String(f[b.dataset.f]===b.dataset.v)));
+    let shown=0;
+    groups.forEach(g=>{
+      let n=0;
+      $$('tbody tr',g).forEach(r=>{
+        const ok=(f.p==='all'||r.dataset.p===f.p)&&(f.t==='all'||r.dataset.t===f.t)&&(f.c==='all'||r.dataset.c===f.c)
+          &&(f.u==='all'||r.dataset.u.split(' ').includes(f.u))&&(!f.q||r.dataset.s.includes(f.q));
+        r.hidden=!ok; if(ok) n++;
+      });
+      const c=$('.xcount',g), tot=+c.dataset.total;
+      c.textContent = n===tot ? `${tot} scenarios` : `${n} of ${tot} scenarios`;
+      g.hidden=n===0; shown+=n;
+      if(openMatches && active()) g.open=n>0;
+    });
+    $('#mapcount').textContent = active() ? `Showing ${shown} of ${allRows.length}` : `${allRows.length} scenarios`;
+    $('#reset').hidden=!active();
+    $('#noresult').style.display=shown?'none':'block';
+    syncToggle();
+  }
+  $$('#mapbar [data-f]').forEach(b=>b.addEventListener('click',()=>{f[b.dataset.f]=b.dataset.v;apply(true);}));
+  let qt; $('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{f.q=e.target.value.trim().toLowerCase();apply(true);},120);});
+  function reset(){ Object.assign(f,{p:'all',t:'all',c:'all',u:'all',q:''}); $('#q').value=''; apply(false); }
+  $('#reset').addEventListener('click',()=>{reset();groups.forEach(g=>g.open=false);syncToggle();});
+
+  // Expand / collapse all groups
+  const tog=$('#toggleall');
+  function syncToggle(){ const vis=groups.filter(g=>!g.hidden); tog.textContent = vis.length && vis.every(g=>g.open) ? 'Collapse all' : 'Expand all'; }
+  tog.addEventListener('click',()=>{ const vis=groups.filter(g=>!g.hidden); const open=!vis.every(g=>g.open); vis.forEach(g=>g.open=open); syncToggle(); });
+  groups.forEach(g=>g.addEventListener('toggle',syncToggle));
+
+  function scrollTo(el,block){ el.scrollIntoView({behavior:smooth(),block:block||'start'}); }
+
+  // Jump to a scenario row (from consolidated scenarios)
+  function showRow(id){
+    const r=document.getElementById(id); if(!r) return;
+    if(r.hidden) reset();
+    const g=r.closest('.xgroup'); g.open=true; syncToggle();
+    scrollTo(r,'center');
+    r.classList.remove('flash'); void r.offsetWidth; r.classList.add('flash');
+    setTimeout(()=>r.classList.remove('flash'),2200);
+  }
+  $$('[data-row]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showRow(a.dataset.row);}));
+
+  // Open an experience group
+  $$('[data-open]').forEach(a=>a.addEventListener('click',e=>{
+    e.preventDefault(); const g=document.getElementById(a.dataset.open);
+    if(g.hidden) reset(); g.open=true; syncToggle(); scrollTo(g);
+  }));
+
+  // Filter the map by a user
+  $$('.ujump').forEach(b=>b.addEventListener('click',()=>{
+    reset(); f.u=b.dataset.user; apply(true); scrollTo($('#mapbar'));
+  }));
+
+  // CS tag in a row jumps to its consolidated scenario
+  $$('[data-jump]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();scrollTo(document.getElementById(a.dataset.jump));}));
+
+  apply(false);
+  addEventListener('beforeprint',()=>{ reset(); groups.forEach(g=>g.open=true); });
+})();
+</script>
